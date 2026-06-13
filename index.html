@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>On és la deixalleria mòbil de Reus?</title>
+  <meta name="description" content="Consulta quan i on trobar la deixalleria mòbil de Reus, filtra les ubicacions i obre la ruta al mapa." />
+  <meta name="theme-color" content="#14532d" />
+  <meta property="og:title" content="On és la deixalleria mòbil de Reus?" />
+  <meta property="og:description" content="Consulta els pròxims dies, horaris i ubicacions de la deixalleria mòbil." />
+  <meta property="og:type" content="website" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+
+  <style>
+    :root {
+      --fons: #f4f6f8;
+      --targeta: #ffffff;
+      --text: #17202a;
+      --muted: #6b7280;
+      --vora: #d9dee7;
+      --accent: #166534;
+      --accent-fosc: #14532d;
+      --accent-suau: #dcfce7;
+      --avui: #16a34a;
+      --event: #f97316;
+      --event-suau: #ffedd5;
+      --ombra: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --focus: #facc15;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--fons);
+      color: var(--text);
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible,
+    a:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .salta-contingut {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      z-index: 20;
+      transform: translateY(-150%);
+      background: white;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 800;
+    }
+
+    .salta-contingut:focus {
+      transform: translateY(0);
+    }
+
+    .contenidor {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--accent-fosc), #15803d);
+      color: white;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--ombra);
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.5rem, 4vw, 2.3rem);
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.9;
+      max-width: 760px;
+      font-size: 1.05rem;
+    }
+
+    .cap-accions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .cap-accions button {
+      background: white;
+      color: var(--accent-fosc);
+    }
+
+    .cap-accions button[hidden] {
+      display: none;
+    }
+
+    .proxim-destacat {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 6px solid var(--accent);
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--ombra);
+    }
+
+    .proxim-destacat .sobrelinia {
+      margin: 0 0 5px;
+      color: var(--accent-fosc);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .proxim-destacat h2 {
+      margin: 0 0 6px;
+      font-size: clamp(1.2rem, 3vw, 1.65rem);
+    }
+
+    .proxim-destacat p {
+      margin: 4px 0;
+    }
+
+    .boto-mapa {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      background: var(--accent);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--targeta);
+      padding: 16px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--ombra);
+    }
+
+    .controls-grup {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .filtres {
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) minmax(280px, 1.6fr) auto auto;
+      gap: 10px;
+      align-items: end;
+      padding-top: 12px;
+      border-top: 1px solid var(--vora);
+    }
+
+    .camp {
+      display: grid;
+      gap: 5px;
+    }
+
+    .camp label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #374151;
+    }
+
+    .resultats-filtre {
+      grid-column: 1 / -1;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    button,
+    select,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: none;
+      background: var(--accent);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover {
+      filter: brightness(0.95);
+    }
+
+    button.secundari {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    select,
+    input[type="number"] {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--vora);
+      background: white;
+      color: var(--text);
+      max-width: 100%;
+    }
+
+    #selectorLloc {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    #cercaLloc {
+      width: 100%;
+    }
+
+    .mes-any {
+      font-size: 1.35rem;
+      font-weight: 800;
+      text-transform: capitalize;
+    }
+
+    .calendari {
+      background: var(--targeta);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--ombra);
+    }
+
+    .llista-mes {
+      display: none;
+      gap: 10px;
+    }
+
+    .dia-mobil {
+      background: var(--targeta);
+      border: 1px solid var(--vora);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    .dia-mobil h3 {
+      margin: 0 0 8px;
+      text-transform: capitalize;
+      font-size: 1rem;
+    }
+
+    .dies-setmana {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      background: #eef2ff;
+      border-bottom: 1px solid var(--vora);
+    }
+
+    .dies-setmana div {
+      text-align: center;
+      padding: 12px 6px;
+      font-weight: 800;
+      color: #1e3a8a;
+    }
+
+    .graella {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+
+    .dia {
+      min-height: 125px;
+      padding: 9px;
+      border-right: 1px solid var(--vora);
+      border-bottom: 1px solid var(--vora);
+      background: white;
+      position: relative;
+    }
+
+    .dia:nth-child(7n) {
+      border-right: none;
+    }
+
+    .dia.buit {
+      background: #f9fafb;
+    }
+
+    .numero-dia {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .dia.avui .numero-dia {
+      background: var(--avui);
+      color: white;
+    }
+
+    .dia.te-events {
+      background: #fffaf5;
+    }
+
+    .event {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin: 4px 0;
+      padding: 6px 7px;
+      border-radius: 8px;
+      background: var(--event-suau);
+      color: #7c2d12;
+      border: 1px solid #fed7aa;
+      font-size: 0.78rem;
+      line-height: 1.15;
+      cursor: pointer;
+    }
+
+    .event:hover {
+      background: #fed7aa;
+    }
+
+    .etiqueta-horari {
+      display: inline-block;
+      margin-top: 3px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: white;
+      background: var(--event);
+      border-radius: 999px;
+      padding: 2px 6px;
+    }
+
+    .resum {
+      margin-top: 18px;
+      background: var(--targeta);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--ombra);
+    }
+
+    .resum h2 {
+      margin-top: 0;
+    }
+
+    .llista-propers {
+      display: grid;
+      gap: 10px;
+    }
+
+    .proper {
+      padding: 12px;
+      border: 1px solid var(--vora);
+      border-radius: 12px;
+      background: #f9fafb;
+      width: 100%;
+      color: var(--text);
+    }
+
+    .proper:hover {
+      background: #eef2ff;
+    }
+
+    .proper-detall {
+      display: block;
+      width: 100%;
+      padding: 0;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      font-weight: 400;
+    }
+
+    .proper-detall:hover {
+      filter: none;
+    }
+
+    .proper strong {
+      color: #111827;
+    }
+
+    .proper .boto-mapa,
+    .dia-mobil .boto-mapa {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      padding: 7px 10px;
+    }
+
+    .informacio {
+      margin-top: 18px;
+      padding: 16px 18px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 14px;
+      color: #713f12;
+      font-size: 0.9rem;
+    }
+
+    .informacio p {
+      margin: 5px 0;
+    }
+
+    dialog {
+      width: min(620px, calc(100% - 32px));
+      border: none;
+      border-radius: 18px;
+      padding: 0;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.3);
+    }
+
+    dialog::backdrop {
+      background: rgba(15, 23, 42, 0.55);
+    }
+
+    .modal-cap {
+      background: var(--accent);
+      color: white;
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .modal-cap h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .modal-cap button {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 10px;
+    }
+
+    .modal-cos {
+      padding: 18px;
+    }
+
+    .modal-cos p {
+      margin: 8px 0;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    @media (max-width: 760px) {
+      .contenidor {
+        padding: 12px;
+      }
+
+      .controls {
+        align-items: stretch;
+      }
+
+      .controls-grup {
+        width: 100%;
+      }
+
+      .proxim-destacat {
+        grid-template-columns: 1fr;
+      }
+
+      .proxim-destacat .boto-mapa {
+        width: 100%;
+      }
+
+      .filtres {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .filtres .camp:nth-child(1),
+      .filtres .camp:nth-child(2) {
+        grid-column: 1 / -1;
+      }
+
+      .controls-grup button,
+      .controls-grup select,
+      .controls-grup input {
+        flex: 1 1 auto;
+      }
+
+      #selectorLloc {
+        width: 100%;
+        min-width: 100%;
+      }
+
+      .calendari {
+        display: none;
+      }
+
+      .llista-mes {
+        display: grid;
+      }
+
+      .mes-any {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="salta-contingut" href="#contingut">Salta al contingut</a>
+  <div class="contenidor">
+    <header>
+      <h1>On és la deixalleria mòbil de Reus?</h1>
+      <p>Consulta ràpidament el pròxim servei, filtra per carrer o barri i obre la ubicació al mapa.</p>
+      <div class="cap-accions">
+        <button id="compartir" type="button">Comparteix la pàgina</button>
+        <button id="installar" type="button" hidden>Instal·la l'app</button>
+      </div>
+    </header>
+
+    <section id="proximDestacat" class="proxim-destacat" aria-live="polite"></section>
+
+    <section class="controls" aria-label="Controls del calendari">
+      <div class="controls-grup">
+        <button id="anterior" type="button" aria-label="Mostra el mes anterior">← Mes anterior</button>
+        <button id="avui" type="button" class="secundari">Avui</button>
+        <button id="seguent" type="button" aria-label="Mostra el mes següent">Mes següent →</button>
+      </div>
+
+      <div id="mesAny" class="mes-any" aria-live="polite"></div>
+
+      <div class="filtres">
+        <div class="camp">
+          <label for="cercaLloc">Cerca per carrer o barri</label>
+          <input id="cercaLloc" type="search" placeholder="Ex.: Llibertat, Gaudí..." autocomplete="off" />
+        </div>
+        <div class="camp">
+          <label for="selectorLloc">Tria una de les 16 adreces</label>
+          <select id="selectorLloc">
+            <option value="">Totes les adreces</option>
+          </select>
+        </div>
+        <div class="camp">
+          <label for="selectorMes">Mes</label>
+          <select id="selectorMes"></select>
+        </div>
+        <div class="camp">
+          <label for="selectorAny">Any</label>
+          <input id="selectorAny" type="number" min="1900" max="2200" />
+        </div>
+        <p id="resultatsFiltre" class="resultats-filtre" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <main id="contingut">
+      <section class="calendari" aria-label="Calendari mensual">
+        <div class="dies-setmana" aria-hidden="true">
+          <div>Dill</div>
+          <div>Dim</div>
+          <div>Dimc</div>
+          <div>Dij</div>
+          <div>Div</div>
+          <div>Dis</div>
+          <div>Diu</div>
+        </div>
+
+        <div id="graella" class="graella"></div>
+      </section>
+
+      <section id="llistaMes" class="llista-mes" aria-label="Serveis del mes"></section>
+    </main>
+
+    <section class="resum">
+      <h2>Propers dies amb servei</h2>
+      <div id="propers" class="llista-propers"></div>
+    </section>
+
+    <aside class="informacio">
+      <p><strong>Important:</strong> el càlcul de l’últim dia laborable exclou caps de setmana, però no festius locals.</p>
+      <p>Comprova possibles canvis al web de l’<a href="https://www.reus.cat/" target="_blank" rel="noopener noreferrer">Ajuntament de Reus</a>. Última actualització d’aquesta pàgina: 13 de juny de 2026.</p>
+    </aside>
+  </div>
+
+  <dialog id="modal" aria-labelledby="modalTitol">
+    <div class="modal-cap">
+      <h2 id="modalTitol">Detall</h2>
+      <button id="tancarModal" type="button" aria-label="Tanca el detall">Tanca</button>
+    </div>
+    <div id="modalCos" class="modal-cos"></div>
+  </dialog>
+
+  <script>
+    const mesos = [
+      "gener", "febrer", "març", "abril", "maig", "juny",
+      "juliol", "agost", "setembre", "octubre", "novembre", "desembre"
+    ];
+
+    const diesSetmana = {
+      dilluns: 1,
+      dimarts: 2,
+      dimecres: 3,
+      dijous: 4,
+      divendres: 5,
+      divendre: 5,
+      dissabte: 6,
+      dissabtes: 6,
+      diumenge: 7,
+      diumenges: 7
+    };
+
+    const ordinals = {
+      primer: 1,
+      "1r": 1,
+      segon: 2,
+      "2n": 2,
+      tercer: 3,
+      "3r": 3,
+      quart: 4,
+      "4t": 4
+    };
+
+    const estat = {
+      data: new Date()
+    };
+
+    const graella = document.getElementById("graella");
+    const mesAny = document.getElementById("mesAny");
+    const selectorMes = document.getElementById("selectorMes");
+    const selectorAny = document.getElementById("selectorAny");
+    const selectorLloc = document.getElementById("selectorLloc");
+    const cercaLloc = document.getElementById("cercaLloc");
+    const resultatsFiltre = document.getElementById("resultatsFiltre");
+    const propers = document.getElementById("propers");
+    const proximDestacat = document.getElementById("proximDestacat");
+    const llistaMes = document.getElementById("llistaMes");
+    const compartir = document.getElementById("compartir");
+    const installar = document.getElementById("installar");
+
+    const modal = document.getElementById("modal");
+    const modalTitol = document.getElementById("modalTitol");
+    const modalCos = document.getElementById("modalCos");
+    const tancarModal = document.getElementById("tancarModal");
+
+    mesos.forEach((mes, index) => {
+      const option = document.createElement("option");
+      option.value = index;
+      option.textContent = mes.charAt(0).toUpperCase() + mes.slice(1);
+      selectorMes.appendChild(option);
+    });
+
+    function normalitza(text) {
+      return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[.,()']/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function obtenirHorari(fragment) {
+      const t = normalitza(fragment);
+
+      if (t.includes("tarda") || t.includes("tardes")) return "tarda";
+      if (t.includes("mati") || t.includes("matins")) return "matí";
+
+      return "";
+    }
+
+    function extreuFragmentHorari(text, posicio) {
+      const resta = text.slice(posicio);
+      const posicioSeguentUltim = resta.indexOf(" ultim ", 1);
+      const posicioComa = resta.indexOf(",");
+
+      const talls = [posicioSeguentUltim, posicioComa]
+        .filter(valor => valor !== -1)
+        .sort((a, b) => a - b);
+
+      if (talls.length === 0) return resta;
+
+      return resta.slice(0, talls[0]);
+    }
+
+    function parsejaRegles(punt) {
+      const textOriginal = punt.dates;
+      const text = normalitza(textOriginal);
+      const regles = [];
+
+      /*
+        Cas:
+        "l'últim dia laborable de cada mes"
+      */
+      if (text.includes("ultim dia laborable")) {
+        const posicioUltim = text.indexOf("ultim dia laborable");
+        const fragment = text.slice(posicioUltim);
+
+        regles.push({
+          tipus: "ultimLaborable",
+          horari: obtenirHorari(fragment)
+        });
+      }
+
+      /*
+        Casos:
+        "l'últim dissabte de cada mes"
+        "l'últim diumenge de cada mes"
+        "l'últim divendres de cada mes"
+      */
+      for (const [nomDia, numeroDia] of Object.entries(diesSetmana)) {
+        const patro = "ultim " + nomDia;
+
+        if (text.includes(patro)) {
+          const posicioUltim = text.indexOf(patro);
+          const fragment = text.slice(posicioUltim);
+
+          regles.push({
+            tipus: "ultimDiaSetmana",
+            diaSetmana: numeroDia,
+            horari: obtenirHorari(fragment)
+          });
+        }
+      }
+
+      /*
+        Casos:
+        "primer dilluns"
+        "segon dimarts"
+        "2n dissabte"
+        "tercer divendres"
+        "quart dimecres"
+      */
+      const paraules = text.split(" ");
+
+      for (const [nomDia, numeroDia] of Object.entries(diesSetmana)) {
+        if (!paraules.includes(nomDia)) continue;
+
+        for (const [ordinal, numeroOrdinal] of Object.entries(ordinals)) {
+          if (!paraules.includes(ordinal)) continue;
+
+          const posicioOrdinal = text.indexOf(ordinal);
+          const fragment = extreuFragmentHorari(text, posicioOrdinal);
+          const horari = obtenirHorari(fragment) || obtenirHorari(textOriginal);
+
+          regles.push({
+            tipus: "ordinalSetmana",
+            ordinal: numeroOrdinal,
+            diaSetmana: numeroDia,
+            horari
+          });
+        }
+      }
+
+      return regles;
+    }
+
+    let punts = [];
+
+    function validaPunts(dades) {
+      if (!Array.isArray(dades)) {
+        throw new Error("El fitxer punts.json ha de contenir una llista.");
+      }
+
+      for (const [index, punt] of dades.entries()) {
+        if (
+          !punt ||
+          typeof punt.lloc !== "string" ||
+          typeof punt.dates !== "string" ||
+          !punt.lloc.trim() ||
+          !punt.dates.trim()
+        ) {
+          throw new Error(`L'element ${index + 1} de punts.json no és vàlid.`);
+        }
+      }
+
+      return dades;
+    }
+
+    async function carregarPunts() {
+      const resposta = await fetch("./punts.json");
+
+      if (!resposta.ok) {
+        throw new Error(`No s'ha pogut carregar punts.json (${resposta.status}).`);
+      }
+
+      const dades = validaPunts(await resposta.json());
+      punts = dades.map(punt => ({
+        ...punt,
+        regles: parsejaRegles(punt)
+      }));
+
+      punts.forEach((punt, index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = punt.lloc;
+        selectorLloc.appendChild(option);
+      });
+    }
+
+    function diesDelMes(any, mes) {
+      return new Date(any, mes + 1, 0).getDate();
+    }
+
+    function diaSetmanaISO(data) {
+      /*
+        JavaScript:
+        diumenge = 0, dilluns = 1, ...
+        Nosaltres volem:
+        dilluns = 1, ..., diumenge = 7
+      */
+      const d = data.getDay();
+      return d === 0 ? 7 : d;
+    }
+
+    function obtenirOrdinalDiaSetmana(data) {
+      const diaMes = data.getDate();
+      return Math.floor((diaMes - 1) / 7) + 1;
+    }
+
+    function esUltimDiaLaborable(data) {
+      const any = data.getFullYear();
+      const mes = data.getMonth();
+
+      let ultim = new Date(any, mes + 1, 0);
+
+      while (diaSetmanaISO(ultim) > 5) {
+        ultim.setDate(ultim.getDate() - 1);
+      }
+
+      return mateixaData(data, ultim);
+    }
+
+    function esUltimDiaSetmanaDelMes(data, diaSetmanaBuscat) {
+      const any = data.getFullYear();
+      const mes = data.getMonth();
+
+      let ultim = new Date(any, mes + 1, 0);
+
+      while (diaSetmanaISO(ultim) !== diaSetmanaBuscat) {
+        ultim.setDate(ultim.getDate() - 1);
+      }
+
+      return mateixaData(data, ultim);
+    }
+
+    function mateixaData(a, b) {
+      return (
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate()
+      );
+    }
+
+    function esMateixaRegla(data, regla) {
+      if (regla.tipus === "ordinalSetmana") {
+        return (
+          diaSetmanaISO(data) === regla.diaSetmana &&
+          obtenirOrdinalDiaSetmana(data) === regla.ordinal
+        );
+      }
+
+      if (regla.tipus === "ultimLaborable") {
+        return esUltimDiaLaborable(data);
+      }
+
+      if (regla.tipus === "ultimDiaSetmana") {
+        return (
+          diaSetmanaISO(data) === regla.diaSetmana &&
+          esUltimDiaSetmanaDelMes(data, regla.diaSetmana)
+        );
+      }
+
+      return false;
+    }
+
+    function obtenirPuntsFiltrats() {
+      const filtreLloc = selectorLloc.value;
+
+      if (filtreLloc !== "") {
+        const punt = punts[Number(filtreLloc)];
+        return punt ? [punt] : [];
+      }
+
+      const cerca = normalitza(cercaLloc.value);
+
+      if (!cerca) {
+        return punts;
+      }
+
+      return punts.filter(punt => normalitza(punt.lloc).includes(cerca));
+    }
+
+    function obtenirEventsDelDia(data) {
+      const events = [];
+      const puntsFiltrats = obtenirPuntsFiltrats();
+
+      for (const punt of puntsFiltrats) {
+        for (const regla of punt.regles) {
+          if (esMateixaRegla(data, regla)) {
+            events.push({
+              lloc: punt.lloc,
+              dates: punt.dates,
+              horari: regla.horari,
+              tipus: regla.tipus
+            });
+          }
+        }
+      }
+
+      return events;
+    }
+
+    function formatData(data) {
+      return new Intl.DateTimeFormat("ca-ES", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }).format(data);
+    }
+
+    function creaUrlMapa(lloc) {
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lloc} Reus`)}`;
+    }
+
+    function creaEnllacMapa(lloc, text = "Com arribar-hi") {
+      const enllac = document.createElement("a");
+      enllac.className = "boto-mapa";
+      enllac.href = creaUrlMapa(lloc);
+      enllac.target = "_blank";
+      enllac.rel = "noopener noreferrer";
+      enllac.textContent = text;
+      enllac.setAttribute("aria-label", `${text}: ${lloc}`);
+      return enllac;
+    }
+
+    function actualitzaResultatsFiltre() {
+      const total = obtenirPuntsFiltrats().length;
+      resultatsFiltre.textContent = total === 1
+        ? "1 adreça visible."
+        : `${total} adreces visibles.`;
+    }
+
+    function obtenirPropers(limit = 10) {
+      const inici = new Date();
+      inici.setHours(0, 0, 0, 0);
+      const trobats = [];
+
+      for (let i = 0; i < 366 && trobats.length < limit; i++) {
+        const data = new Date(inici);
+        data.setDate(inici.getDate() + i);
+
+        for (const event of obtenirEventsDelDia(data)) {
+          trobats.push({ data: new Date(data), event });
+          if (trobats.length >= limit) break;
+        }
+      }
+
+      return trobats;
+    }
+
+    function renderProximDestacat() {
+      proximDestacat.innerHTML = "";
+      const proxim = obtenirPropers(1)[0];
+
+      if (!proxim) {
+        proximDestacat.innerHTML = `
+          <div>
+            <p class="sobrelinia">Pròxim servei</p>
+            <h2>Cap resultat amb el filtre actual</h2>
+            <p>Prova una altra adreça o esborra la cerca.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const text = document.createElement("div");
+      text.innerHTML = `
+        <p class="sobrelinia">Pròxim servei</p>
+        <h2>${escapaHTML(formatData(proxim.data))}</h2>
+        <p><strong>${escapaHTML(proxim.event.lloc)}</strong></p>
+        ${proxim.event.horari ? `<p>Horari: ${escapaHTML(proxim.event.horari)}</p>` : ""}
+      `;
+
+      proximDestacat.append(text, creaEnllacMapa(proxim.event.lloc));
+    }
+
+    function renderLlistaMes(any, mes, totalDies) {
+      llistaMes.innerHTML = "";
+      let totalEvents = 0;
+
+      for (let dia = 1; dia <= totalDies; dia++) {
+        const data = new Date(any, mes, dia);
+        const events = obtenirEventsDelDia(data);
+        if (events.length === 0) continue;
+
+        totalEvents += events.length;
+        const grup = document.createElement("article");
+        grup.className = "dia-mobil";
+
+        const titol = document.createElement("h3");
+        titol.textContent = formatData(data);
+        grup.appendChild(titol);
+
+        for (const event of events) {
+          const boto = document.createElement("button");
+          boto.type = "button";
+          boto.className = "event";
+          boto.innerHTML = `
+            ${escapaHTML(event.lloc)}
+            ${event.horari ? `<br><span class="etiqueta-horari">${escapaHTML(event.horari)}</span>` : ""}
+          `;
+          boto.addEventListener("click", () => obrirModal(data, event));
+          grup.append(boto, creaEnllacMapa(event.lloc));
+        }
+
+        llistaMes.appendChild(grup);
+      }
+
+      if (totalEvents === 0) {
+        llistaMes.innerHTML = `<article class="dia-mobil"><p>No hi ha serveis aquest mes amb el filtre actual.</p></article>`;
+      }
+    }
+
+    function renderCalendari() {
+      graella.innerHTML = "";
+
+      const any = estat.data.getFullYear();
+      const mes = estat.data.getMonth();
+      const avui = new Date();
+
+      mesAny.textContent = `${mesos[mes]} de ${any}`;
+      selectorMes.value = mes;
+      selectorAny.value = any;
+
+      const primerDia = new Date(any, mes, 1);
+      const totalDies = diesDelMes(any, mes);
+      actualitzaResultatsFiltre();
+
+      const espaisInicials = diaSetmanaISO(primerDia) - 1;
+
+      for (let i = 0; i < espaisInicials; i++) {
+        const buit = document.createElement("div");
+        buit.className = "dia buit";
+        graella.appendChild(buit);
+      }
+
+      for (let dia = 1; dia <= totalDies; dia++) {
+        const data = new Date(any, mes, dia);
+        const events = obtenirEventsDelDia(data);
+
+        const cela = document.createElement("div");
+        cela.className = "dia";
+        cela.setAttribute("aria-label", formatData(data));
+
+        if (mateixaData(data, avui)) {
+          cela.classList.add("avui");
+        }
+
+        if (events.length > 0) {
+          cela.classList.add("te-events");
+        }
+
+        const numero = document.createElement("div");
+        numero.className = "numero-dia";
+        numero.textContent = dia;
+        cela.appendChild(numero);
+
+        for (const event of events) {
+          const boto = document.createElement("button");
+          boto.type = "button";
+          boto.className = "event";
+
+          const nomCurt = event.lloc.length > 42
+            ? event.lloc.slice(0, 42) + "…"
+            : event.lloc;
+
+          boto.innerHTML = `
+            ${escapaHTML(nomCurt)}
+            ${event.horari ? `<br><span class="etiqueta-horari">${escapaHTML(event.horari)}</span>` : ""}
+          `;
+          boto.setAttribute("aria-label", `${event.lloc}${event.horari ? `, horari de ${event.horari}` : ""}`);
+
+          boto.addEventListener("click", () => obrirModal(data, event));
+          cela.appendChild(boto);
+        }
+
+        graella.appendChild(cela);
+      }
+
+      renderLlistaMes(any, mes, totalDies);
+      renderPropers();
+      renderProximDestacat();
+    }
+
+    function obrirModal(data, event) {
+      modalTitol.textContent = formatData(data);
+
+      modalCos.innerHTML = `
+        <p><strong>Lloc:</strong> ${escapaHTML(event.lloc)}</p>
+        <p><strong>Descripció:</strong> ${escapaHTML(event.dates)}</p>
+        ${event.horari ? `<p><strong>Horari:</strong> ${escapaHTML(event.horari)}</p>` : ""}
+        <p><a class="boto-mapa" href="${creaUrlMapa(event.lloc)}" target="_blank" rel="noopener noreferrer">Com arribar-hi</a></p>
+        <p class="muted">
+          Regla aplicada:
+          ${
+            event.tipus === "ultimLaborable"
+              ? "últim dia laborable del mes"
+              : event.tipus === "ultimDiaSetmana"
+                ? "últim dia concret de la setmana dins del mes"
+                : "dia ordinal de la setmana dins del mes"
+          }
+        </p>
+      `;
+
+      modal.showModal();
+    }
+
+    function escapaHTML(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderPropers() {
+      propers.innerHTML = "";
+      const trobats = obtenirPropers(10);
+
+      if (trobats.length === 0) {
+        propers.innerHTML = `<p>No s'ha trobat cap servei proper amb el filtre actual.</p>`;
+        return;
+      }
+
+      for (const item of trobats) {
+        const div = document.createElement("div");
+        div.className = "proper";
+
+        const boto = document.createElement("button");
+        boto.type = "button";
+        boto.className = "proper-detall";
+        boto.innerHTML = `
+          <strong>${formatData(item.data)}</strong><br>
+          ${escapaHTML(item.event.lloc)}
+          ${item.event.horari ? `<br><span class="etiqueta-horari">${escapaHTML(item.event.horari)}</span>` : ""}
+        `;
+
+        boto.addEventListener("click", () => obrirModal(item.data, item.event));
+        div.append(boto, creaEnllacMapa(item.event.lloc));
+        propers.appendChild(div);
+      }
+    }
+
+    function canviaMes(increment) {
+      const any = estat.data.getFullYear();
+      const mes = estat.data.getMonth();
+      estat.data = new Date(any, mes + increment, 1);
+      renderCalendari();
+    }
+
+    document.getElementById("anterior").addEventListener("click", () => {
+      canviaMes(-1);
+    });
+
+    document.getElementById("seguent").addEventListener("click", () => {
+      canviaMes(1);
+    });
+
+    document.getElementById("avui").addEventListener("click", () => {
+      estat.data = new Date();
+      renderCalendari();
+    });
+
+    selectorLloc.addEventListener("change", () => {
+      if (selectorLloc.value !== "") {
+        cercaLloc.value = "";
+      }
+      renderCalendari();
+    });
+
+    cercaLloc.addEventListener("input", () => {
+      if (cercaLloc.value.trim() !== "") {
+        selectorLloc.value = "";
+      }
+      renderCalendari();
+    });
+
+    selectorMes.addEventListener("change", () => {
+      estat.data = new Date(
+        estat.data.getFullYear(),
+        Number(selectorMes.value),
+        1
+      );
+      renderCalendari();
+    });
+
+    selectorAny.addEventListener("change", () => {
+      const any = Number(selectorAny.value);
+      if (!Number.isInteger(any) || any < 1900 || any > 2200) {
+        selectorAny.value = estat.data.getFullYear();
+        return;
+      }
+      estat.data = new Date(any, estat.data.getMonth(), 1);
+      renderCalendari();
+    });
+
+    tancarModal.addEventListener("click", () => {
+      modal.close();
+    });
+
+    modal.addEventListener("click", event => {
+      const rectangle = modal.getBoundingClientRect();
+
+      const clicFora =
+        event.clientX < rectangle.left ||
+        event.clientX > rectangle.right ||
+        event.clientY < rectangle.top ||
+        event.clientY > rectangle.bottom;
+
+      if (clicFora) {
+        modal.close();
+      }
+    });
+
+    compartir.addEventListener("click", async () => {
+      const dades = {
+        title: document.title,
+        text: "Consulta on i quan trobar la deixalleria mòbil de Reus.",
+        url: window.location.href
+      };
+
+      try {
+        if (navigator.share) {
+          await navigator.share(dades);
+          return;
+        }
+
+        await navigator.clipboard.writeText(window.location.href);
+        const textOriginal = compartir.textContent;
+        compartir.textContent = "Enllaç copiat";
+        window.setTimeout(() => {
+          compartir.textContent = textOriginal;
+        }, 2000);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          compartir.textContent = "No s'ha pogut compartir";
+        }
+      }
+    });
+
+    let sollicitudInstallacio = null;
+
+    window.addEventListener("beforeinstallprompt", event => {
+      event.preventDefault();
+      sollicitudInstallacio = event;
+      installar.hidden = false;
+    });
+
+    installar.addEventListener("click", async () => {
+      if (!sollicitudInstallacio) return;
+      sollicitudInstallacio.prompt();
+      await sollicitudInstallacio.userChoice;
+      sollicitudInstallacio = null;
+      installar.hidden = true;
+    });
+
+    window.addEventListener("appinstalled", () => {
+      sollicitudInstallacio = null;
+      installar.hidden = true;
+    });
+
+    if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
+      navigator.serviceWorker.register("./service-worker.js").catch(() => {
+        // La pàgina continua funcionant encara que el navegador no permeti la instal·lació.
+      });
+    }
+
+    async function iniciarAplicacio() {
+      try {
+        await carregarPunts();
+        renderCalendari();
+      } catch (error) {
+        console.error(error);
+        proximDestacat.innerHTML = `
+          <div>
+            <p class="sobrelinia">Error de dades</p>
+            <h2>No s'han pogut carregar les ubicacions</h2>
+            <p>Comprova que el fitxer <strong>punts.json</strong> sigui vàlid i que la pàgina s'obri des d'un servidor web.</p>
+          </div>
+        `;
+        resultatsFiltre.textContent = "No hi ha dades disponibles.";
+      }
+    }
+
+    iniciarAplicacio();
+  </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+[
+  {
+    "lloc": "Carrer Roger de Bellfort amb carrer Doctor Vilaseca.",
+    "dates": "Primer i tercer dilluns de mes."
+  },
+  {
+    "lloc": "Carrer Mare Moles amb Passeig Prim.",
+    "dates": "Primer i tercer dimarts de mes."
+  },
+  {
+    "lloc": "Plaça Compte de Reus amb carrer Sardana.",
+    "dates": "Primer i tercer dimecres de mes."
+  },
+  {
+    "lloc": "Carrer Frederic Urales amb carrer Navarra.",
+    "dates": "Primer i tercer dijous de mes, horari de matí."
+  },
+  {
+    "lloc": "Avinguda Castellers, Mas Vilanova.",
+    "dates": "Primer i tercer dijous de mes, horari de tarda."
+  },
+  {
+    "lloc": "Plaça Abat Oliba.",
+    "dates": "Primer divendres de mes."
+  },
+  {
+    "lloc": "Avinguda Sant Jordi.",
+    "dates": "Segon i quart dilluns de mes."
+  },
+  {
+    "lloc": "Mercat Central de Reus (davant de l'antic hospital).",
+    "dates": "Segon i quart dimarts de mes."
+  },
+  {
+    "lloc": "Carrer Maria Cortina i Pascual",
+    "dates": "Segon i quart dimecres de mes."
+  },
+  {
+    "lloc": "Avinguda Jaume I (davant del Mercat del Carrilet).",
+    "dates": "Segon i quart dijous de mes."
+  },
+  {
+    "lloc": "Avinguda de les Torres amb Avinguda dels Pins.",
+    "dates": "Segon i quart divendres de mes, horari de tarda."
+  },
+  {
+    "lloc": "Plaça Sagrada Família, Barri Gaudí",
+    "dates": "Tercer divendres de mes, horari matí"
+  },
+  {
+    "lloc": "Plaça Celdoni i Torroja, B. Immaculada",
+    "dates": "Tercer divendres de mes, horari tarda."
+  },
+  {
+    "lloc": "Carrer Anglaterra, Blancafort",
+    "dates": "Segon i quart divendres de mes, horari matí."
+  },
+  {
+    "lloc": "Carrer de Pirineus, 3 (davant de la pl. José Monzón)",
+    "dates": "2n divendre de mes (matins) L'últim dia laborable de cada mes (tardes)"
+  }
+]
