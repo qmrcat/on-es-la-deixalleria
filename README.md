@@ -104,6 +104,13 @@ El càlcul de l'últim dia laborable exclou dissabtes i diumenges, però no té 
 compte els festius locals. Les ubicacions i els horaris s'han de contrastar
 amb la informació oficial de l'Ajuntament de Reus.
 
+## Font oficial
+
+Les dades es poden contrastar amb el document de la deixalleria mòbil publicat
+per l'Ajuntament de Reus:
+
+https://www.reus.cat/sites/reus/files/Fitxers/arees/medi_ambient/documents/deixalleriaMobil.pdf
+
 ## Llicència
 
 Aquest projecte es publica sota [CC0 1.0 Universal](LICENSE). En la mesura que
