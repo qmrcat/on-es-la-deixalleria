@@ -106,4 +106,6 @@ amb la informació oficial de l'Ajuntament de Reus.
 
 ## Llicència
 
-Aquest projecte no té encara una llicència definida.
+Aquest projecte es publica sota [CC0 1.0 Universal](LICENSE). En la mesura que
+ho permet la llei, es pot copiar, modificar, distribuir i utilitzar, també amb
+finalitats comercials, sense demanar permís ni atribuir-ne l'autoria.
